@@ -1,3 +1,13 @@
 {
-    "todo-tree.tree.scanMode": "current file"
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true
+    },
+    "cSpell.words": [
+        "Gonagle"
+    ]
 }

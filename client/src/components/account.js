@@ -24,7 +24,7 @@ const Account = () => {
 
   const { setInputs, onSubmit, onChange, inputs, dirty, reset } = useForm('AdvanceForm', options);
 
-  const tryConnect = () => axios.get(`/auth-ping`).then(r=> setStatus(r.data));
+  const tryConnect = () => axios.get(`/auth-ping`).then(r => setStatus(r.data));
 
   const getUserProfile = () => axios.get(`/user/profile`).then(r=> {
     setProfile(r.data)

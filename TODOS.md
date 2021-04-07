@@ -1,4 +1,3 @@
-TODO: Add WalletConnect API + QR Code system to home
-TOTO: Display NFTs in wallet
+TODO: Fix wallet connect qr code experience
 TODO: Add simple admin "Add Project" interface
 TODO: Change site title -> Redeem My Nifty

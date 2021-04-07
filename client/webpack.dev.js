@@ -9,7 +9,8 @@ module.exports = merge(common, {
     devServer: {
         contentBase: path.join(__dirname, './src'),
         compress: true,
-        port: 3000
+        port: 3000,
+        disableHostCheck: true
     },
     plugins: [
         new webpack.DefinePlugin({

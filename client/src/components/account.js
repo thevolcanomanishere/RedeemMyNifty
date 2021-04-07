@@ -4,10 +4,11 @@ import CenterCard363 from './centerCard363';
 import useForm from '../use-form-react';
 
 const Account = () => {
-  const [editting, setEditting] =  useState(false);
+  const [editing, setEditing] =  useState(false);
   const [errMsg, setErrMsg] =  useState('');
   const [status, setStatus] =  useState('');
   const [profile, setProfile] =  useState({});
+
   const options = {
     initialValues: {
         firstName: '',
@@ -20,8 +21,11 @@ const Account = () => {
     },
     debug: false
   }
+
   const { setInputs, onSubmit, onChange, inputs, dirty, reset } = useForm('AdvanceForm', options);
+
   const tryConnect = () => axios.get(`/auth-ping`).then(r=> setStatus(r.data));
+
   const getUserProfile = () => axios.get(`/user/profile`).then(r=> {
     setProfile(r.data)
     setInputs({
@@ -31,31 +35,36 @@ const Account = () => {
     })
     setErrMsg();
   });
+
   const updateUserProfile = () => {
     axios.post(`/user/profile`, inputs)
       .then(() => cancelForm())
       .catch(e => setErrMsg(`${e.response.data}. Please try it again.`));
   }
+
   useEffect(() => {
     tryConnect();
     getUserProfile();
-  }, [])
-  const switchEditting = () => {
-    setEditting(!editting)
+  }, []);
+
+  const switchEditing = () => {
+    setEditing(!editing)
   }
+
   const cancelForm = () => {
-    setEditting(false)
+    setEditing(false)
     reset();
     getUserProfile();
   }
+
   const renderButtons = () => {
-    if(editting){
+    if(editing){
       return (<div className="form-group">
         <button disabled={!dirty} type="submit" className="btn-lg btn btn-light btn-block">Save Change</button>
         <button className="btn-lg btn btn-secondary btn-block" onClick={cancelForm}>Cancel</button>
       </div>)
-    }else{
-      return (<button className="btn btn-light btn-lg btn-block" onClick={switchEditting}>Update Information</button>)
+    } else {
+      return (<button className="btn btn-light btn-lg btn-block" onClick={switchEditing}>Update Information</button>)
     }
   }
   const renderProfileForm = () => {
@@ -64,7 +73,7 @@ const Account = () => {
         <div className="form-group">
           <label>First Name:</label>
           <input
-            disabled={!editting}
+            disabled={!editing}
             type='text'
             name="firstName"
             onChange={onChange}
@@ -78,7 +87,7 @@ const Account = () => {
       <div className="form-group">
         <label>Last Name:</label>
         <input
-          disabled={!editting}
+          disabled={!editing}
           type='text'
           name="lastName"
           onChange={onChange}

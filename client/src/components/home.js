@@ -7,6 +7,7 @@ import CenterCard363 from "./centerCard363"
 const Home = () => {
 
   const [accountConnected, setAccountConnected] = useState(false);
+  const [connector, setConnector] = useState();
   const [ethAccount, setEthAccount] =  useState();
   const [nftList, setNftList] = useState();
 
@@ -33,20 +34,25 @@ const Home = () => {
       return false;    
   }
 
+  
   const connectWallet = () => {
-    const connector = new WalletConnect({
+
+    const walletConnect = new WalletConnect({
       bridge: "https://bridge.walletconnect.org", // Required
       qrcodeModal: QRCodeModal,
     });
-    
+
     // Check if connection is already established
-    if (!connector.connected) {
+    if (!walletConnect.connected) {
       // create new session
-      connector.createSession();
+      walletConnect.createSession();
+    } else {
+      // Sometimes a session is left in the wrong state. Kill and reset
+      walletConnect.killSession().then(() => walletConnect.createSession());
     }
     
     // Subscribe to connection events
-    connector.on("connect", (error, payload) => {
+    walletConnect.on("connect", (error, payload) => {
       if (error) {
         throw error;
       }
@@ -54,12 +60,13 @@ const Home = () => {
       // Get provided accounts and chainId
       const { accounts } = payload.params[0];
       console.log(payload);
+      setConnector(walletConnect);
       setEthAccount(accounts[0])
       setAccountConnected(true);
       checkAddressForNFT(accounts[0]);
     });
     
-    connector.on("session_update", (error, payload) => {
+    walletConnect.on("session_update", (error, payload) => {
       if (error) {
         throw error;
       }
@@ -70,12 +77,24 @@ const Home = () => {
       console.log(payload);
     });
     
-    connector.on("disconnect", (error, payload) => {
+    walletConnect.on("disconnect", (error, payload) => {
       if (error) {
         throw error;
       }
-      setAccountConnected(false);
+      resetState();
     });
+  }
+
+  const disconnectWallet = () => {
+    connector.killSession();
+    resetState();
+  }
+
+  const resetState = () => {
+    setAccountConnected(false);
+    setConnector();
+    setEthAccount();
+    setNftList();
   }
 
   const renderConnectButton = () => {
@@ -83,6 +102,7 @@ const Home = () => {
       return (
       <div>
         <p className="text-muted">ETH Address: {ethAccount} ☀</p>
+        <button className="btn btn-light btn-lg btn-block" onClick={disconnectWallet}>Disconnect</button>
       </div>
       )
     } else {

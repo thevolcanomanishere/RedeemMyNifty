@@ -36,7 +36,10 @@
   "dependencies": {
     "@walletconnect/client": "^1.4.1",
     "@walletconnect/qrcode-modal": "^1.4.1",
+    "@walletconnect/utils": "^1.4.1",
     "axios": "^0.21.1",
+    "ethereumjs-util": "^7.0.10",
+    "ethers": "^5.1.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

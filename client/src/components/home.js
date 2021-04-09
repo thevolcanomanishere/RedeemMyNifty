@@ -3,6 +3,7 @@ import Axios from 'axios';
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import CenterCard363 from "./centerCard363"
+import { signPersonalMessage } from '../utils';
 
 const Home = () => {
 
@@ -97,12 +98,17 @@ const Home = () => {
     setNftList();
   }
 
+  const sendMessageToWallet = async () => {
+    await signPersonalMessage(ethAccount, connector, "Hello there");
+  }
+
   const renderConnectButton = () => {
     if(accountConnected){
       return (
       <div>
         <p className="text-muted">ETH Address: {ethAccount} ☀</p>
         <button className="btn btn-light btn-lg btn-block" onClick={disconnectWallet}>Disconnect</button>
+        <button className="btn btn-light btn-lg btn-block" onClick={sendMessageToWallet}>Sign Message</button>
       </div>
       )
     } else {
@@ -115,12 +121,12 @@ const Home = () => {
   const renderNFTList = () => {
     if(accountConnected && nftList && nftList.length > 0 ){
       const list = nftList.map((item) => {
-        return <li key={item.contractAddress + item.tokenID}>{item.tokenName} ID: {item.tokenID}</li>
+        return <li className="list-group-item" key={item.contractAddress + item.tokenID}>{item.tokenName} ID: {item.tokenID}</li>
     });
       return (
-        <div>
+        <ul className="list-group nft-list">
           {list}
-        </div>
+        </ul>
       )
     }
   }

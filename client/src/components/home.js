@@ -7,10 +7,14 @@ import { signPersonalMessage } from '../utils';
 
 const Home = () => {
 
+  const localStorageEthAccount = localStorage.getItem("ethAccount");
+  const localStorageNFTList = JSON.parse(localStorage.getItem("nftList"));
+
   const [accountConnected, setAccountConnected] = useState(false);
   const [connector, setConnector] = useState();
-  const [ethAccount, setEthAccount] =  useState();
-  const [nftList, setNftList] = useState();
+  const [ethAccount, setEthAccount] =  useState(localStorageEthAccount ? localStorageEthAccount : "");
+  const [nftList, setNftList] = useState(localStorageNFTList ? localStorageNFTList : "");
+
 
   const createNFTTokenURL = (walletAddress) => {
     return `https://api.etherscan.io/api?module=account&action=tokennfttx&address=${walletAddress}&startblock=0&endblock=999999999&sort=asc&apikey=M2FJABY1V2USTHUEXF1HTMPYFEMW66J55P`
@@ -31,10 +35,11 @@ const Home = () => {
       const NFTList = NFT.result;
       console.log(NFTList);
       setNftList(NFTList);
+      const stringifiedNFTList = JSON.stringify(NFTList);
+      localStorage.setItem("nftList", stringifiedNFTList);
       }
       return false;    
   }
-
   
   const connectWallet = () => {
 
@@ -63,6 +68,7 @@ const Home = () => {
       console.log(payload);
       setConnector(walletConnect);
       setEthAccount(accounts[0])
+      localStorage.setItem("ethAccount", accounts[0]);
       setAccountConnected(true);
       checkAddressForNFT(accounts[0]);
     });
@@ -87,7 +93,9 @@ const Home = () => {
   }
 
   const disconnectWallet = () => {
-    connector.killSession();
+    if(connector){
+      connector.killSession();
+    }
     resetState();
   }
 
@@ -96,6 +104,8 @@ const Home = () => {
     setConnector();
     setEthAccount();
     setNftList();
+    localStorage.removeItem("ethAccount");
+    localStorage.removeItem("nftList");
   }
 
   const sendMessageToWallet = async () => {
@@ -103,7 +113,7 @@ const Home = () => {
   }
 
   const renderConnectButton = () => {
-    if(accountConnected){
+    if(accountConnected || ethAccount){
       return (
       <div>
         <p className="text-muted">ETH Address: {ethAccount} ☀</p>
@@ -119,10 +129,10 @@ const Home = () => {
   }
 
   const renderNFTList = () => {
-    if(accountConnected && nftList && nftList.length > 0 ){
+    if(nftList && nftList.length > 0 ){
       const list = nftList.map((item) => {
-        return <li className="list-group-item" key={item.contractAddress + item.tokenID}>{item.tokenName} ID: {item.tokenID}</li>
-    });
+        return <li className="list-group-item" key={item.contractAddress + item.tokenID}>{item.tokenName} ID: {item.tokenID}</li> 
+      });
       return (
         <ul className="list-group nft-list">
           {list}
